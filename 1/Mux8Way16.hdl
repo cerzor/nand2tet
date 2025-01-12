@@ -20,5 +20,14 @@ CHIP Mux8Way16 {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    //I did not think to use the 4 way mux... This could be done in 3 steps
+    Mux16(a=a,b=b,sel=sel[0],out=out1);
+    Mux16(a=c,b=d,sel=sel[0],out=out2);
+    Mux16(a=out1,b=out2,sel=sel[1],out=outmuxad);
+
+    Mux16(a=e,b=f,sel=sel[0],out=out3);
+    Mux16(a=g,b=h,sel=sel[0],out=out4);
+    Mux16(a=out3,b=out4,sel=sel[1],out=outmuxeh);
+
+    Mux16(a=outmuxad,b=outmuxeh,sel=sel[2],out=out);
 }
