@@ -41,5 +41,73 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    //handle zx
+    Mux16(a=true, b=false, sel=zx, out=zxmux);
+    And16(a=x, b=zxmux, out=x1);
+
+    //handle nx
+    Mux16(a=false, b=true, sel=nx, out=nxmux);
+    And16(a=x1, b=nxmux, out=resultnxmux);
+    Not16(in=resultnxmux, out=notx1);
+    Or16(a=x1, b=nxmux, out=orx);
+    And16(a=notx1, b=orx, out=xorx);
+
+    //handle zy
+    Mux16(a=true, b=false, sel=zy, out=zymux);
+    And16(a=y, b=zymux, out=y1);
+    
+    //handle ny
+    Mux16(a=false, b=true, sel=ny, out=nymux);
+    And16(a=y1, b=nymux, out=resultnymux);
+    Not16(in=resultnymux, out=noty1);
+    Or16(a=y1, b=nymux, out=ory);
+    And16(a=noty1, b=ory, out=xory);
+    
+    //Handle f
+
+    //if f == 1
+    Not(in=f, out=notf);
+    Mux16(a[0]=f, a[1..15]=false, b=false, sel=false, out=fmux);
+    
+    Not16(in=xorx, out=x2);
+    Add16(a=x2, b=fmux, out=x2scom);
+    Not16(in=xory, out=y2);
+    Add16(a=y2, b=fmux, out=y2scom);
+    Add16(a=x2scom, b=y2scom, out=xy2scomadd);
+    Not16(in=xy2scomadd, out=xy2scomaddnot);
+    Add16(a=xy2scomaddnot, b=fmux, out=xplusy);
+
+    //if f == 0
+    And16(a=xorx, b=xory, out=xandy);
+
+    //Determine what is the answer.
+    Mux16(a=true, b=false, sel=notf, out=fullmuxnotf);
+    Mux16(a=true, b=false, sel=f, out=fullmuxf);
+
+    And16(a=xplusy, b=fullmuxnotf, out=addresult);
+    And16(a=xandy, b=fullmuxf, out=andresult);
+
+    Or16(a=addresult, b=andresult, out=fresult);
+
+    //Handle no
+    Mux16(a=false, b=true, sel=no, out=nomux);
+    And16(a=fresult, b=nomux, out=resultnomux);
+    Not16(in=resultnomux, out=notnomux);
+    Or16(a=fresult, b=nomux, out=orno);
+    And16(a=orno, b=notnomux, out=noresult);
+
+    //find zr
+    Or16(a=noresult, b=false, out[0..7]=result1);
+    Or16(a=noresult, b=false, out[8..15]=result2);
+    Or8Way(in=result1, out=resultzero1);
+    Or8Way(in=result2, out=resultzero2);
+    Or(a=resultzero1, b=resultzero2, out=notzr);
+    Not(in=notzr, out=zr);
+
+    //find ng
+    Or16(a=noresult, b=false, out[15]=ng);
+
+    //set out
+    Or16(a=noresult, b=false, out=out);
+
 }
