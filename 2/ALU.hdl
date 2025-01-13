@@ -42,8 +42,7 @@ CHIP ALU {
 
     PARTS:
     //handle zx
-    Mux16(a=true, b=false, sel=zx, out=zxmux);
-    And16(a=x, b=zxmux, out=x1);
+    Mux16(a=x, b=false, sel=zx, out=x1);
 
     //handle nx
     Mux16(a=false, b=true, sel=nx, out=nxmux);
@@ -53,8 +52,7 @@ CHIP ALU {
     And16(a=notx1, b=orx, out=xorx);
 
     //handle zy
-    Mux16(a=true, b=false, sel=zy, out=zymux);
-    And16(a=y, b=zymux, out=y1);
+    Mux16(a=y, b=false, sel=zy, out=y1);
     
     //handle ny
     Mux16(a=false, b=true, sel=ny, out=nymux);
