@@ -71,7 +71,7 @@ string pop(int &constant){
 string arithmetic(string &str, array<string, 3> &INTEGER_COMMANDS){
 	string command;
 	if (str == INTEGER_COMMANDS[0]) {
-		command = "//add\n@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nD=M+D\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nM=M+1";
+		command = "//add\n@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nD=M+D\n@SP\nA=M\nM=D\n@SP\nM=M+1";
 	} else if (str == INTEGER_COMMANDS[1]) {
 		command = "//subtract\n@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nD=M-D\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nM=M+1";
 	} else if (str == INTEGER_COMMANDS[2]) {
@@ -100,7 +100,7 @@ string boolean(string &str, array<string, 6> &BOOLEAN_COMMANDS, int &stepCounter
 	} else if (str == BOOLEAN_COMMANDS[4]) {
 		command = "//or\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D|M\nM=D\n@SP\nM=M+1";
 	} else if (str == BOOLEAN_COMMANDS[5]) {
-		command = "//not\n@SP\nM=M-1\nA=M\nD=!M\n@SP\nM=M+1";
+		command = "//not\n@SP\nM=M-1\nA=M\nM=!M\n@SP\nM=M+1";
 	}
 
 	return command;
