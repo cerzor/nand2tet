@@ -1,6 +1,6 @@
-command|operation|returns
+c ommand|operation|returns
 --------------------------
-add    | x + y   |integer
+√add    | x + y   |integer
 sub    | x – y   |integer
 neg    | –y      |integer
 eq     | x == y  |boolean
@@ -11,5 +11,5 @@ or     | x Or y  |boolean
 not    | Not x   |boolean
 
 
-push
-pop
+√push
+√pop

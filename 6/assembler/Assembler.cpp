@@ -8,60 +8,6 @@
 
 using namespace std;
 const char* whitespace = " \t\n\r\f\v";
-
-inline string trim(const string& s, const char* t = whitespace)
-{
-    std::string result = s;
-    result.erase(0, result.find_first_not_of(t));
-    result.erase(result.find_last_not_of(t) + 1);
-    return result;
-}
-
-string toBinary16(const string& str){
-    int num = stoi(str);
-    bitset<16> binary(num);
-    return binary.to_string();
-}
-
-string findNextMemoryByValue(const map<string, string>& addressMap){
-    vector<int> values;
-    for (const auto& pair : addressMap) {
-        int value = stoi(pair.second, nullptr, 2);  // Convert binary string to an integer.
-        if (value >= 16 && value < 16384) {  // We only care about values in the range [16, 16383].
-            values.push_back(value);
-        }
-    }
-
-    sort(values.begin(), values.end());
-
-    // Start searching for the next available value greater than or equal to 16.
-    int num = 16;
-    for (int value : values) {
-        if (value == num) {
-            num++;  // If the value is already taken, move to the next number.
-        }
-    }
-    bitset<16> binary(num);
-    return binary.to_string();
-}
-
-
-int main(int argc, char* argv[]) {
-    if(argc > 2){ 
-        cout << "Too many arguements." << endl;
-        return 1;
-    } else if(argc <= 1) {
-        cout << "Missing arguements." << endl;
-        return 1;
-    }
-    
-    string filePath = argv[1];
-    ifstream file(filePath);
-
-   if (!file.is_open()) {
-       cerr << "Error: Could not open the file '" << filePath << "'." << endl;
-       return 1;
-    }
     //Lookup tables
     map<string, string> destTable = {
         {"null", "000"},
@@ -106,6 +52,7 @@ int main(int argc, char* argv[]) {
         {"-M","1110011"},
         {"M+1","1110111"},
         {"M-1","1110010"},
+        {"M+D","1000010"},
         {"D+M","1000010"},
         {"D-M","1010011"},
         {"M-D","1000111"},
@@ -150,6 +97,60 @@ int main(int argc, char* argv[]) {
         {"KBD", "0110000000000000"}
     };
     //End lookup tables
+
+inline string trim(const string& s, const char* t = whitespace)
+{
+    string result = s;
+    result.erase(0, result.find_first_not_of(t));
+    result.erase(result.find_last_not_of(t) + 1);
+    return result;
+}
+
+string toBinary16(const string& str){
+    int num = stoi(str);
+    bitset<16> binary(num);
+    return binary.to_string();
+}
+
+string findNextMemoryByValue(const map<string, string>& addressMap){
+    vector<int> values;
+    for (const auto& pair : addressMap) {
+        int value = stoi(pair.second, nullptr, 2);
+        if (value >= 16 && value < 16384) { 
+            values.push_back(value);
+        }
+    }
+
+    sort(values.begin(), values.end());
+
+    int num = 16;
+    for (int value : values) {
+        if (value == num) {
+            num++;
+        }
+    }
+    bitset<16> binary(num);
+    return binary.to_string();
+}
+
+
+int main(int argc, char* argv[]) {
+    if(argc > 2){ 
+        cout << "Too many arguements." << endl;
+        return 1;
+    } else if(argc <= 1) {
+        cout << "Missing arguements." << endl;
+        return 1;
+    }
+    
+    string filePath = argv[1];
+    ifstream file(filePath);
+
+   if (!file.is_open()) {
+       cerr << "Error: Could not open the file '" << filePath << "'." << endl;
+       return 1;
+    }
+
     map<string, string> addressMap; //scared of memory usage
     string D = "0000000000000000";
     string A = "0000000000000000";
@@ -222,7 +223,7 @@ int main(int argc, char* argv[]) {
 
             }  else { //C instruction
                 size_t endPos = line.find(";");
-                if (endPos == std::string::npos) {
+                if (endPos == string::npos) {
                     jmp = "000";
                     endPos = line.length();
                     dest = destTable[trim(line.substr(0, line.find("=")))];

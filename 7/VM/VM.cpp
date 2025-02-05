@@ -28,7 +28,7 @@ inline string trim(const string& s, const char* t = whitespace)
     return result;
 }
 
-string replaceVariables(const string &input, const vector<string> &replacements) {
+string replaceVariables(const string &input, const vector<string> &replacements, const std::vector<int> &intReplacements) {
 	string temp = input;
 	string findString = "{string}";
 	size_t size_findString = findString.size();
@@ -41,31 +41,69 @@ string replaceVariables(const string &input, const vector<string> &replacements)
 		replacementIndex++;
 	}
 
+    std::string findInt = "{int}";
+    size_t findIntSize = findInt.size();
+    pos = temp.find(findInt);
+    size_t intIndex = 0;
+
+    while (pos != std::string::npos && intIndex < intReplacements.size()) {
+        temp.replace(pos, findIntSize, std::to_string(intReplacements[intIndex]));
+        pos = temp.find(findInt, pos + std::to_string(intReplacements[intIndex]).size());
+        intIndex++;
+    }
+
 	return temp;
 }
 
-string push(string &constant) {
+string push(string &segment, string &val) {
 	vector<string> replacements;
-	replacements.push_back(constant);
-	return replaceVariables("@{string}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1", replacements);
+	replacements.push_back(val);
+	replacements.push_back(segment);
+	replacements.push_back(segment);
+	return replaceVariables("//push {string} {string}\n@{string}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1", replacements, vector<int>());
 }
 
-int pop(int &constant){
+string pop(int &constant){
 	//stub
-	return 0;
+	return "//pop {string}";
 }
 
 string arithmetic(string &str, array<string, 3> &INTEGER_COMMANDS){
+	string command;
 	if (str == INTEGER_COMMANDS[0]) {
-		return "@SP\nAM=M-1\nD=M\nA=A-1\nM=M+D";
+		command = "//add\n@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nD=M+D\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nM=M+1";
+	} else if (str == INTEGER_COMMANDS[1]) {
+		command = "//subtract\n@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nD=M-D\n@SP\nA=M\nM=D\n@SP\nM=M+1\n@SP\nM=M+1";
+	} else if (str == INTEGER_COMMANDS[2]) {
+		command = "//negate variable\n@SP\nA=M\nM=-M\n@SP\nM=M+1";
 	}
 
-	return "";
+	return command;
 }
 
-int boolean(){
-	//stub
-	return 0;
+string boolean(string &str, array<string, 6> &BOOLEAN_COMMANDS, int &stepCounter){
+	string command;
+	vector<int> replacements;
+	replacements.push_back(stepCounter);
+	replacements.push_back(stepCounter);
+	replacements.push_back(stepCounter);
+	replacements.push_back(stepCounter);
+
+	if (str == BOOLEAN_COMMANDS[0]) {
+		command = replaceVariables("//eq\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=M-D\n@EQUAL_{int}\nD;JEQ\n@SP\nA=M\nM=0\n@CONTINUE_{int}\n0;JMP\n(EQUAL_{int})\n@SP\nA=M\nM=-1\n(CONTINUE_{int})\n@SP\nM=M+1", vector<string>(), replacements);
+	} else if (str == BOOLEAN_COMMANDS[1]) {
+		command = replaceVariables("//gt\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=M-D\n@GREATER_{int}\nD;JGT\n@SP\nA=M\nM=0\n@CONTINUE_{int}\n0;JMP\n(GREATER_{int})\n@SP\nA=M\nM=-1\n(CONTINUE_{int})\n@SP\nM=M+1", vector<string>(), replacements);
+	} else if (str == BOOLEAN_COMMANDS[2]) {
+		command = replaceVariables("//lt\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=M-D\n@LESSER_{int}\nD;JLT\n@SP\nA=M\nM=0\n@CONTINUE_{int}\n0;JMP\n(LESSER_{int})\n@SP\nA=M\nM=-1\n(CONTINUE_{int})\n@SP\nM=M+1", vector<string>(), replacements);
+	} else if (str == BOOLEAN_COMMANDS[3]) {
+		command = "//and\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D&M\nM=D\n@SP\nM=M+1";
+	} else if (str == BOOLEAN_COMMANDS[4]) {
+		command = "//or\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D|M\nM=D\n@SP\nM=M+1";
+	} else if (str == BOOLEAN_COMMANDS[5]) {
+		command = "//not\n@SP\nM=M-1\nA=M\nD=!M\n@SP\nM=M+1";
+	}
+
+	return command;
 }
 
 int main(int argc, char* argv[]) { 
@@ -94,6 +132,7 @@ int main(int argc, char* argv[]) {
 	string word;
 	string line;
 	int sp = STACK_START;
+	int stepCounter = 0;
 
     while(getline(file, line)){
         string trimmedLine = trim(line);
@@ -115,20 +154,19 @@ int main(int argc, char* argv[]) {
 	for (vector<string>& tline : lines) {
 		if (find(STACK_COMMANDS.begin(), STACK_COMMANDS.end(), tline[0]) != STACK_COMMANDS.end()) {
 			if (STACK_COMMANDS[0] == tline[0]) {
-				cout << push(tline[2]) << endl;
+				cout << push(tline[2], tline[1]) << endl;
 				sp++;
 			} else if (STACK_COMMANDS[1] == tline[0]) {
 				cout << line[2] << endl;
 			}
 		} else if (find(INTEGER_COMMANDS.begin(), INTEGER_COMMANDS.end(), tline[0]) != INTEGER_COMMANDS.end()) {
-			if (INTEGER_COMMANDS[0] == tline[0]) {
 				cout << arithmetic(tline[0], INTEGER_COMMANDS) << endl;
-			}
 		} else if (find(BOOLEAN_COMMANDS.begin(), BOOLEAN_COMMANDS.end(), tline[0]) != BOOLEAN_COMMANDS.end()) {
-			cout << "Boolean operation: " << tline[0] << endl;
+			cout << boolean(tline[0], BOOLEAN_COMMANDS, stepCounter) << endl;
 		} else {
 			cout << "Invalid operation!" << endl;
 		}
+		stepCounter++;
 
 	}
 
