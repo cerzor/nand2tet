@@ -63,9 +63,12 @@ string push(string &segment, string &val) {
 	return replaceVariables("//push {string} {string}\n@{string}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1", replacements, vector<int>());
 }
 
-string pop(int &constant){
-	//stub
-	return "//pop {string}";
+string pop(string &segment, string &val){
+	vector<string> replacements;
+	replacements.push_back(val);
+	replacements.push_back(segment);
+	replacements.push_back(segment);
+	return replaceVariables("//pop stack {string} {string}\n@{string}\nAM=M-1\nD=M", replacements, vector<int>());
 }
 
 string arithmetic(string &str, array<string, 3> &INTEGER_COMMANDS){
@@ -157,7 +160,7 @@ int main(int argc, char* argv[]) {
 				cout << push(tline[2], tline[1]) << endl;
 				sp++;
 			} else if (STACK_COMMANDS[1] == tline[0]) {
-				cout << line[2] << endl;
+				cout <<pop(tline[2], tline[1]) << endl;
 			}
 		} else if (find(INTEGER_COMMANDS.begin(), INTEGER_COMMANDS.end(), tline[0]) != INTEGER_COMMANDS.end()) {
 				cout << arithmetic(tline[0], INTEGER_COMMANDS) << endl;
