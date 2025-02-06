@@ -1,0 +1,15 @@
+c ommand|operation|returns
+--------------------------
+√add    | x + y   |integer
+sub    | x – y   |integer
+neg    | –y      |integer
+eq     | x == y  |boolean
+gt     | x > y   |boolean
+lt     | x < y   |boolean
+and    | x And y |boolean
+or     | x Or y  |boolean
+not    | Not x   |boolean
+
+
+√push
+√pop
