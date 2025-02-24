@@ -30,21 +30,21 @@ public:
       } else {
         cout << "Unknown arithmetic command\n";
       }
-      return "Unknown writeArithmetic";
+      return "Unknown writeArithmetic\n";
     }
 
-    string writePushPop(const string& command, const int& segment, int& index){
-      string comment = "//" + command + " " + segment + " " + to_string(index);
+    string writePushPop(const string& command, const string& segment, int& index){
+      string comment = "//" + command + " " + segment + " " + to_string(index) + "\n";
       if(command == "C_PUSH"){
         if(segment == "constant"){
-          return comment + "\n@" + to_string(index) + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+          return comment + "@" + to_string(index) + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         } else {
           return comment + "@" + segmentMap[segment] + "\nD=M\n@" + to_string(index) + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         }
       } else if(command == "C_POP"){
         return  comment +"@" + segmentMap[segment] + "\nD=M\n@" + to_string(index) + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n";
       }
-      return "Unknown writePushPop";
+      return "Unknown writePushPop\n";
     }
 
 

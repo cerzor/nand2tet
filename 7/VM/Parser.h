@@ -47,5 +47,3 @@ class Parser {
     string arg1() { return (commandType() == "C_ARITHMETIC") ? tokens[0] : tokens[1]; }
     int arg2() { return (commandType() == "C_PUSH" || commandType() == "C_POP") ? stoi(tokens[2]) : 0; }
 };
-
-}
