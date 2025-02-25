@@ -12,7 +12,7 @@ class Parser {
     vector<string> tokens;
     const char* whitespace = " \t\n\r\f\v";
   public:
-    inline string trim(const string& s){
+    string trim(const string& s){
       string result = s;
       result.erase(0, result.find_first_not_of(whitespace));
       result.erase(result.find_last_not_of(whitespace) + 1);

@@ -15,7 +15,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int temp_index = TEMP_LOW;
+    int tempIndex = TEMP_LOW;
+    int tempBooleanIndex = 0;
      
     Parser parser(argv[1]);
     CodeWriter writer(string(argv[1]).substr(0, string(argv[1]).find(".vm")));
@@ -24,9 +25,9 @@ int main(int argc, char* argv[]) {
         string cmd = parser.commandType();
         if (cmd == "C_PUSH" || cmd == "C_POP") {
           int arg2 = parser.arg2();
-          cout << writer.writePushPop(parser.arg1(), to_string(arg2), temp_index);
+          cout << writer.writePushPop(cmd, parser.arg1(), to_string(arg2), tempIndex);
         } else if (cmd == "C_ARITHMETIC"){
-          cout << writer.writeArithmetic(parser.arg1());
+          cout << writer.writeArithmetic(parser.arg1(), tempBooleanIndex);
         }
     }
 
