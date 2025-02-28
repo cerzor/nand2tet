@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include "Constants.h"
 
 using namespace std;
 class CodeWriter {
@@ -28,6 +29,7 @@ private:
     };
 
     vector<string> simpleCommands = {"add", "sub", "neg"};
+    string pointer[2] = {"THIS", "THAT"};
     
 public:
     CodeWriter(string filePath) {
@@ -65,12 +67,24 @@ public:
         if(command == "constant"){
           return comment + "@" + segment + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         }
-        return comment + "@" + segmentMap[segment] + "\nD=M\n@" + to_string(index) + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+        if (command == "temp") {
+          return comment + "@5\nD=A\n@" + segment  + "\nA=A+D\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+        }
+        if (command == "pointer") {
+          return comment +  "@" + pointer[stoi(segment)] + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+        }
+        return comment + "@" + segmentMap[command] + "\nD=M\n@" + segment + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
 
       }
 
-      if(command == "C_POP"){
-        return  comment +"@" + segmentMap[segment] + "\nD=M\n@" + to_string(index) + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R" + to_string(index) + "\nA=M\nM=D\n";
+      if(commandType == "C_POP"){
+        if (command == "temp") {
+          return  comment +"@5\nD=A\n@" + segment + "\nD=D+A\n@R13\nM=D\n@SP\nM=M-1\nA=M\nD=M\n@R13\nA=M\nM=D\n";
+        }
+        if (command == "pointer") {
+          return comment +  "@SP\nAM=M-1\nD=M\n@" + pointer[stoi(segment)] + "\nA=M\nM=D";
+        }
+        return  comment +"@" + segmentMap[command] + "\nD=M\n@" + segment + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n";
       }
       return "Unknown writePushPop\n";
     }

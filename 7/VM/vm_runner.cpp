@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     }
 
     int tempIndex = TEMP_LOW;
-    int tempBooleanIndex = 0;
+    int tempBooleanIndex = 1;
      
     Parser parser(argv[1]);
     CodeWriter writer(string(argv[1]).substr(0, string(argv[1]).find(".vm")));
