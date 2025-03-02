@@ -73,6 +73,9 @@ public:
         if (command == "pointer") {
           return comment +  "@" + pointer[stoi(segment)] + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         }
+        if (command == "static") {
+          return comment + "@Static." + segment + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+        }
         return comment + "@" + segmentMap[command] + "\nD=M\n@" + segment + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
 
       }
@@ -82,7 +85,10 @@ public:
           return  comment +"@5\nD=A\n@" + segment + "\nD=D+A\n@R13\nM=D\n@SP\nM=M-1\nA=M\nD=M\n@R13\nA=M\nM=D\n";
         }
         if (command == "pointer") {
-          return comment +  "@SP\nAM=M-1\nD=M\n@" + pointer[stoi(segment)] + "\nA=M\nM=D";
+          return comment +  "@SP\nAM=M-1\nD=M\n@" + pointer[stoi(segment)] + "\nM=D\n";
+        }
+        if (command == "static") {
+          return comment + "@SP\nAM=M-1\nD=M\n@Static." + segment + "\nM=D\n";
         }
         return  comment +"@" + segmentMap[command] + "\nD=M\n@" + segment + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n";
       }

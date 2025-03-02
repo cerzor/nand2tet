@@ -11,7 +11,6 @@ M=M+1
 AM=M-1
 D=M
 @THIS
-A=M
 M=D//C_PUSH constant 3040
 @3040
 D=A
@@ -25,7 +24,6 @@ M=M+1
 AM=M-1
 D=M
 @THAT
-A=M
 M=D//C_PUSH constant 32
 @32
 D=A
