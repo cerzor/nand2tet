@@ -32,6 +32,8 @@ int main(int argc, char* argv[]) {
             cout << writer.writeLabel(parser.arg1());
         } else if (cmd == "C_IF") {
             cout << writer.writeIf(parser.arg1());
+        } else if (cmd == "C_GOTO") {
+            cout << writer.writeGoto(parser.arg1());
         }
     }
 

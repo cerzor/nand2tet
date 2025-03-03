@@ -96,15 +96,18 @@ public:
     }
 
     string writeLabel(const string& label) {
-        return "(" + label + ")\n";
+      //string comment = "//" + label + "\n";
+      return "(" + label + ")\n";
     }
 
    string writeGoto(const string& label) {
-
+      //string comment = "//" + label + "\n";
+      return "@" + label + "\n0;JMP\n";
     }
 
    string writeIf(const string& label) {
-        return "@SP\nAM=M-1\nD=M\n@" + label + "\nD;JNE\n";
+      //string comment = "//" + label + "\n";
+      return "@SP\nAM=M-1\nD=M\n@" + label + "\nD;JNE\n";
     }
 
   string writeFunction(const string& function, int nVars[]) {
