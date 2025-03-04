@@ -61,7 +61,7 @@ public:
       return "Unknown writeArithmetic\n";
     }
 
-    string writePushPop(const string& commandType, const string& command, const string& segment, int& index){
+    string writePushPop(const string& commandType, const string& command, const string& segment){
       string comment = "//" + commandType + " " + command + " " + segment + "\n";
       if(commandType == "C_PUSH"){
         if(command == "constant"){
@@ -110,16 +110,41 @@ public:
       return "@SP\nAM=M-1\nD=M\n@" + label + "\nD;JNE\n";
     }
 
-  string writeFunction(const string& function, int nVars[]) {
-
+  string writeFunction(const string& function, int nVars) {
+      string commands = "(" + function + ")\n";
+      for (int i = 0; i < nVars; i++) {
+        commands += "@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      }
+      return commands;
     }
 
-  string writeCall(const string& function, int nArgs[]) {
-
+  string writeCall(const string& function, int nArgs, int& returnCount) {
+      string returnLabel = function + "$return." + to_string(returnCount++);
+      string commands;
+      commands += "@" + returnLabel + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      commands += "@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      commands += "@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      commands += "@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      commands += "@THAT\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+      commands += "@SP\nD=M\n@" + to_string(nArgs) + "\nD=D-A\n@5\nD=D-A\n@ARG\nM=D\n";
+      commands += "@SP\nD=M\n@LCL\nM=D\n";
+      commands += "@" + function + "\n0;JMP\n";
+      commands += "(" + returnLabel + ")\n";
+      return commands;
     }
 
   string writeReturn() {
-
+      string commands = "";
+      commands += "@LCL\nD=M\n@R13\nM=D\n";
+      commands += "@5\nA=D-A\nD=M\n@R14\nM=D\n";
+      commands += "@SP\nAM=M-1\nD=M\n@ARG\nA=M\nM=D\n";
+      commands += "@ARG\nD=M+1\n@SP\nM=D\n";
+      commands += "@R13\nD=M\n@1\nA=D-A\nD=M\n@THAT\nM=D\n";
+      commands += "@R13\nD=M\n@2\nA=D-A\nD=M\n@THIS\nM=D\n";
+      commands += "@R13\nD=M\n@3\nA=D-A\nD=M\n@ARG\nM=D\n";
+      commands += "@R13\nD=M\n@4\nA=D-A\nD=M\n@LCL\nM=D\n";
+      commands += "@R14\n0;JMP\n";
+      return commands;
     }
 
     void close(){

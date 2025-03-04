@@ -15,17 +15,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int tempIndex = TEMP_LOW;
     int tempBooleanIndex = 1;
      
     Parser parser(argv[1]);
     CodeWriter writer(string(argv[1]).substr(0, string(argv[1]).find(".vm")));
+    int returnCount = 0;
     while (parser.hasMoreCommands()) {
         parser.advance();
         string cmd = parser.commandType();
         if (cmd == "C_PUSH" || cmd == "C_POP") {
-          int arg2 = parser.arg2();
-          cout << writer.writePushPop(cmd, parser.arg1(), to_string(arg2), tempIndex);
+          cout << writer.writePushPop(cmd, parser.arg1(), to_string(parser.arg2()));
         } else if (cmd == "C_ARITHMETIC"){
           cout << writer.writeArithmetic(parser.arg1(), tempBooleanIndex);
         } else if (cmd == "C_LABEL") {
@@ -34,6 +33,12 @@ int main(int argc, char* argv[]) {
             cout << writer.writeIf(parser.arg1());
         } else if (cmd == "C_GOTO") {
             cout << writer.writeGoto(parser.arg1());
+        } else if (cmd == "C_FUNCTION") {
+            cout << writer.writeFunction(parser.arg1(), parser.arg2());
+        } else if (cmd == "C_CALL") {
+            cout << writer.writeCall(parser.arg1(), parser.arg2(), returnCount);
+        } else if (cmd == "C_RETURN") {
+
         }
     }
 
