@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
         parser.advance();
         string cmd = parser.commandType();
         if (cmd == "C_PUSH" || cmd == "C_POP") {
-          cout << writer.writePushPop(cmd, parser.arg1(), to_string(parser.arg2()));
+          cout << writer.writePushPop(cmd, parser.arg1(), to_string(parser.arg2()), currentFunction);
         } else if (cmd == "C_ARITHMETIC"){
           cout << writer.writeArithmetic(parser.arg1(), tempBooleanIndex);
         } else if (cmd == "C_LABEL") {
@@ -39,7 +39,8 @@ int main(int argc, char* argv[]) {
             cout << writer.writeGoto(parser.arg1());
         } else if (cmd == "C_FUNCTION") {
             currentFunction = parser.arg1();
-            cout << writer.writeFunction(parser.arg1(), parser.arg2());
+            int arg2 = parser.arg2();
+            cout << writer.writeFunction(currentFunction, arg2);
         } else if (cmd == "C_CALL") {
             cout << writer.writeCall(parser.arg1(), parser.arg2(), returnCount, currentFunction);
         } else if (cmd == "C_RETURN") {

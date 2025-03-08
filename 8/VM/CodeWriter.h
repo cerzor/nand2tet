@@ -121,8 +121,9 @@ public:
       return "Unknown writeArithmetic\n";
     }
 
-    string writePushPop(const string& commandType, const string& command, const string& segment){
+    string writePushPop(const string& commandType, const string& command, const string& segment, const string& functionName){
       string comment = "//" + commandType + " " + command + " " + segment + "\n";
+      string staticLabel = functionName.empty() ? "Static" : (functionName.find('.') == string::npos ? functionName : functionName.substr(0, functionName.find('.')));
       if(commandType == "C_PUSH"){
         if(command == "constant"){
           return comment + "@" + segment + "\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
@@ -134,7 +135,7 @@ public:
           return comment +  "@" + pointer[stoi(segment)] + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         }
         if (command == "static") {
-          return comment + "@Static." + segment + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
+          return comment + "@" + staticLabel + "." + segment + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
         }
         return comment + "@" + segmentMap[command] + "\nD=M\n@" + segment + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
 
@@ -148,7 +149,7 @@ public:
           return comment +  "@SP\nAM=M-1\nD=M\n@" + pointer[stoi(segment)] + "\nM=D\n";
         }
         if (command == "static") {
-          return comment + "@SP\nAM=M-1\nD=M\n@Static." + segment + "\nM=D\n";
+          return comment + "@SP\nAM=M-1\nD=M\n@" + staticLabel + "." + segment + "\nM=D\n";
         }
         return  comment +"@" + segmentMap[command] + "\nD=M\n@" + segment + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n";
       }
@@ -171,7 +172,7 @@ public:
     }
 
   string writeFunction(const string& function, int nVars) {
-      string commands = "(" + function + ")\n";
+      string commands = "//write function " + function + "\n(" + function + ")\n";
       for (int i = 0; i < nVars; i++) {
         commands += "@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n";
       }

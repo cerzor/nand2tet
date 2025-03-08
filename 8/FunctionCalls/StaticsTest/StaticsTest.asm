@@ -52,6 +52,7 @@ M=D
 @Sys.init
 0;JMP
 (after_bootstrap)
+//write function Sys.init
 (Sys.init)
 //C_PUSH constant 6
 @6
@@ -322,6 +323,7 @@ M=D
 //goto-END
 @END
 0;JMP
+//write function Class1.set
 (Class1.set)
 //C_PUSH argument 0
 @ARG
@@ -338,7 +340,7 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@Static.0
+@Class1.0
 M=D
 //C_PUSH argument 1
 @ARG
@@ -355,7 +357,7 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@Static.1
+@Class1.1
 M=D
 //C_PUSH constant 0
 @0
@@ -416,9 +418,10 @@ M=D
 @R14
 A=M
 0;JMP
+//write function Class1.get
 (Class1.get)
 //C_PUSH static 0
-@Static.0
+@Class1.0
 D=M
 @SP
 A=M
@@ -426,7 +429,7 @@ M=D
 @SP
 M=M+1
 //C_PUSH static 1
-@Static.1
+@Class1.1
 D=M
 @SP
 A=M
@@ -493,6 +496,7 @@ M=D
 @R14
 A=M
 0;JMP
+//write function Class2.set
 (Class2.set)
 //C_PUSH argument 0
 @ARG
@@ -509,7 +513,7 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@Static.0
+@Class2.0
 M=D
 //C_PUSH argument 1
 @ARG
@@ -526,7 +530,7 @@ M=M+1
 @SP
 AM=M-1
 D=M
-@Static.1
+@Class2.1
 M=D
 //C_PUSH constant 0
 @0
@@ -587,9 +591,10 @@ M=D
 @R14
 A=M
 0;JMP
+//write function Class2.get
 (Class2.get)
 //C_PUSH static 0
-@Static.0
+@Class2.0
 D=M
 @SP
 A=M
@@ -597,7 +602,7 @@ M=D
 @SP
 M=M+1
 //C_PUSH static 1
-@Static.1
+@Class2.1
 D=M
 @SP
 A=M

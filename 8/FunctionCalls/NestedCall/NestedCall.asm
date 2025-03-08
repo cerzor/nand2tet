@@ -52,6 +52,7 @@ M=D
 @Sys.init
 0;JMP
 (after_bootstrap)
+//write function Sys.init
 (Sys.init)
 //C_PUSH constant 4000
 @4000
@@ -151,7 +152,43 @@ M=D
 //goto-LOOP
 @LOOP
 0;JMP
+//write function Sys.main
 (Sys.main)
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
 //C_PUSH constant 4001
 @4001
 D=A
@@ -458,6 +495,7 @@ M=D
 @R14
 A=M
 0;JMP
+//write function Sys.add12
 (Sys.add12)
 //C_PUSH constant 4002
 @4002
